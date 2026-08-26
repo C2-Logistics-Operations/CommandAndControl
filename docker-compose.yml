@@ -1,0 +1,20 @@
+services:
+  database:
+    image: postgres:16-alpine
+    container_name: c2_postgres_db
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      # Persistencia de datos en disco local
+      - postgres_data:/var/lib/postgresql/data
+      # Script DDL de inicialización automática
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+volumes:
+  postgres_data:
+    driver: local
