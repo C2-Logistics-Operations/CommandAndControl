@@ -4,12 +4,22 @@ const pool = require('./db');
 require('dotenv').config();
 const authRoutes = require('./routes/auth');
 require('dotenv').config();
+const suministrosRoutes = require('./routes/suministros');
+const misionesRoutes = require('./routes/misiones');
+const escuadronesRoutes = require('./routes/escuadrones');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Middlewares globales
 app.use(cors());
 app.use(express.json());
+
+// Montaje de enrutadores
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/suministros', suministrosRoutes);
+app.use('/api/v1/misiones', misionesRoutes);
+app.use('/api/v1/escuadrones', escuadronesRoutes);
 
 // Rutas de la API
 app.use('/api/v1/auth', authRoutes);
