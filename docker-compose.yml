@@ -1,20 +1,91 @@
 services:
-  database:
-    image: postgres:16-alpine
+  # Servicio 1: Base de Datos Relacional PostgreSQL
+  db:
+    image: postgres:15-alpine
     container_name: c2_postgres_db
     restart: always
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: c2_db
     ports:
-      - "${POSTGRES_PORT}:5432"
+      - "5432:5432"
     volumes:
-      # Persistencia de datos en disco local
       - postgres_data:/var/lib/postgresql/data
-      # Script DDL de inicialización automática
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - c2_network
+
+  # Servicio 2: Backend A (Express.js)
+  backend-express:
+    build:
+      context: ./backends/backend-express
+    container_name: c2_backend_express
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgrespassword
+      DB_NAME: c2_db
+      JWT_SECRET: secreto_super_seguro_c2
+    depends_on:
+      - db
+    networks:
+      - c2_network
+
+  # Servicio 3: Backend B (FastAPI)
+  backend-fastapi:
+    build:
+      context: ./backends/backend-fastapi
+    container_name: c2_backend_fastapi
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      PORT: 8000
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgrespassword
+      DB_NAME: c2_db
+      JWT_SECRET: secreto_super_seguro_c2
+    depends_on:
+      - db
+    networks:
+      - c2_network
+
+  # Servicio 4: Frontend A (React)
+  frontend-react:
+    build:
+      context: ./frontends/frontend-react
+    container_name: c2_frontend_react
+    restart: always
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend-express
+    networks:
+      - c2_network
+
+  # Servicio 5: Frontend B (Vue.js)
+  frontend-vue:
+    build:
+      context: ./frontends/frontend-vue
+    container_name: c2_frontend_vue
+    restart: always
+    ports:
+      - "8081:80"
+    depends_on:
+      - backend-fastapi
+    networks:
+      - c2_network
 
 volumes:
   postgres_data:
-    driver: local
+
+networks:
+  c2_network:
+    driver: bridge
