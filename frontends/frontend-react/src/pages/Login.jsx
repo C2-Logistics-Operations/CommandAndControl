@@ -42,8 +42,9 @@ export default function Login() {
         {error && <div style={{ color: 'var(--danger-red)', marginBottom: '15px', fontSize: '12px' }}>⚠️ {error}</div>}
 
         <form onSubmit={handleSubmit}>
-          <label style={{ fontSize: '12px' }}>OPERADOR / USUARIO:</label>
+          <label htmlFor="username" style={{ fontSize: '12px' }}>OPERADOR / USUARIO:</label>
           <input 
+            id="username"
             type="text" 
             className="hud-input" 
             value={username} 
@@ -51,8 +52,9 @@ export default function Login() {
             required 
           />
 
-          <label style={{ fontSize: '12px' }}>CLAVE DE ACCESO:</label>
+          <label htmlFor="password" style={{ fontSize: '12px' }}>CLAVE DE ACCESO:</label>
           <input 
+            id="password"
             type="password" 
             className="hud-input" 
             value={password} 
