@@ -1,0 +1,135 @@
+name: CI/CD Pipeline - C2 Command System
+
+on:
+  push:
+    branches: [ "main", "develop", "feature/*" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+jobs:
+  # -------------------------------------------------------------
+  # JOB 1: Test Backend A (Node.js / Express)
+  # -------------------------------------------------------------
+  test-backend-express:
+    name: Backend Express Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend-express
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: './backend-express/package-lock.json'
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Ejecutar Tests con Jest
+        run: npm test
+
+  # -------------------------------------------------------------
+  # JOB 2: Test Backend B (Python / FastAPI)
+  # -------------------------------------------------------------
+  test-backend-fastapi:
+    name: Backend FastAPI Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend-fastapi
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Ejecutar Tests con PyTest
+        run: pytest
+
+  # -------------------------------------------------------------
+  # JOB 3: Test Frontend A (React + Vitest)
+  # -------------------------------------------------------------
+  test-frontend-react:
+    name: Frontend React Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend-react
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: './frontend-react/package-lock.json'
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Ejecutar Tests con Vitest
+        run: npm test
+
+  # -------------------------------------------------------------
+  # JOB 4: Test Frontend B (Vue 3 + Vitest)
+  # -------------------------------------------------------------
+  test-frontend-vue:
+    name: Frontend Vue 3 Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend-vue
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: './frontend-vue/package-lock.json'
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Ejecutar Tests con Vitest
+        run: npm test
+
+  # -------------------------------------------------------------
+  # JOB 5: Build de Contenedores Docker
+  # -------------------------------------------------------------
+  docker-build-check:
+    name: Docker Build Validation
+    needs: [test-backend-express, test-backend-fastapi, test-frontend-react, test-frontend-vue]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Validar compilación de Docker Compose
+        run: docker compose build
