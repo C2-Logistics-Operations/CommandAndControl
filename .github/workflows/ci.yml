@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./backend-express
+        working-directory: ./backends/backend-express
 
     steps:
       - name: Checkout del código
@@ -26,7 +26,7 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: './backend-express/package-lock.json'
+          cache-dependency-path: './backends/backend-express/package-lock.json'
 
       - name: Instalar dependencias
         run: npm ci
@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./backend-fastapi
+        working-directory: ./backends/backend-fastapi
 
     steps:
       - name: Checkout del código
@@ -70,7 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./frontend-react
+        working-directory: ./frontends/frontend-react
 
     steps:
       - name: Checkout del código
@@ -81,7 +81,7 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: './frontend-react/package-lock.json'
+          cache-dependency-path: './frontends/frontend-react/package-lock.json'
 
       - name: Instalar dependencias
         run: npm ci
@@ -97,7 +97,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./frontend-vue
+        working-directory: ./frontends/frontend-vue
 
     steps:
       - name: Checkout del código
@@ -108,7 +108,7 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: './frontend-vue/package-lock.json'
+          cache-dependency-path: './frontends/frontend-vue/package-lock.json'
 
       - name: Instalar dependencias
         run: npm ci
