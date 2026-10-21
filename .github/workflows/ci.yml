@@ -79,8 +79,10 @@ jobs:
         with:
           node-version: '20.18.0'
 
-      - name: Instalar dependencias con dependencias opcionales
-        run: npm install --include=optional
+      - name: Instalar dependencias adaptadas a Linux
+        run: |
+          rm -f package-lock.json
+          npm install
 
       - name: Ejecutar Tests con Vitest
         run: npm test
@@ -104,8 +106,10 @@ jobs:
         with:
           node-version: '20.18.0'
 
-      - name: Instalar dependencias con dependencias opcionales
-        run: npm install --include=optional
+      - name: Instalar dependencias adaptadas a Linux
+        run: |
+          rm -f package-lock.json
+          npm install
 
       - name: Ejecutar Tests con Vitest
         run: npm test
