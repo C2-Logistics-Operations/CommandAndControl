@@ -79,10 +79,8 @@ jobs:
         with:
           node-version: '20.18.0'
 
-      - name: Instalar dependencias adaptadas a Linux
-        run: |
-          rm -f package-lock.json
-          npm install
+      - name: Instalar dependencias para Linux x64
+        run: npm install --os=linux --cpu=x64
 
       - name: Ejecutar Tests con Vitest
         run: npm test
@@ -106,10 +104,8 @@ jobs:
         with:
           node-version: '20.18.0'
 
-      - name: Instalar dependencias adaptadas a Linux
-        run: |
-          rm -f package-lock.json
-          npm install
+      - name: Instalar dependencias para Linux x64
+        run: npm install --os=linux --cpu=x64
 
       - name: Ejecutar Tests con Vitest
         run: npm test
