@@ -35,9 +35,22 @@ export default function Dashboard() {
     }
   };
 
-  useEffect(() => {
-    cargarDatos();
-  }, []);
+useEffect(() => {
+  const ws = new WebSocket('ws://localhost:3000');
+
+  ws.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    if (data.event === 'MISSION_STATE_CHANGED') {
+      setMisiones((prevMisiones) =>
+        prevMisiones.map((mision) =>
+          mision.id === data.mision_id ? { ...mision, estado: data.nuevo_estado } : mision
+        )
+      );
+    }
+  };
+
+  return () => ws.close();
+}, []);
 
   // Handlers
   const handleCrearMision = async (e) => {

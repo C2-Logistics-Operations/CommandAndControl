@@ -62,6 +62,7 @@ router.post('/', autenticarJWT, verificarRol('COMANDANTE'), async (req, res) => 
 router.post('/:id/manifiesto', autenticarJWT, verificarRol('COMANDANTE'), async (req, res) => {
   const { id } = req.params;
   const { suministro_id, cantidad_requerida } = req.body;
+  const estadoCalculado = await evaluarEstadoMision(id);
 
   if (!suministro_id || !cantidad_requerida || cantidad_requerida <= 0) {
     return res.status(400).json({ error: 'Suministro o cantidad requerida no válida.' });
@@ -76,6 +77,16 @@ router.post('/:id/manifiesto', autenticarJWT, verificarRol('COMANDANTE'), async 
        DO UPDATE SET cantidad_requerida = EXCLUDED.cantidad_requerida`,
       [id, suministro_id, cantidad_requerida]
     );
+
+    // Disparar telemetría WebSocket
+    const broadcast = req.app.get('broadcast');
+      if (broadcast) {
+        broadcast({
+          event: 'MISSION_STATE_CHANGED',
+          mision_id: parseInt(id),
+        nuevo_estado: estadoCalculado
+      });
+    }
 
     // Disparar la regla de negocio
     const estadoCalculado = await evaluarEstadoMision(id);
