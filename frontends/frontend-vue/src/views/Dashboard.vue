@@ -120,33 +120,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuth } from '../store/auth';
-import { onMounted, onUnmounted } from 'vue';
-
-let ws = null;
-
-onMounted(() => {
-  cargarTodo();
-
-  const wsUrl = state.apiBaseUrl.replace('http', 'ws').replace('/api/v1', '') + '/ws';
-  ws = new WebSocket(wsUrl);
-
-  ws.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    if (data.event === 'MISSION_STATE_CHANGED') {
-      const mision = misiones.value.find(m => m.id === data.mision_id);
-      if (mision) {
-        mision.estado = data.nuevo_estado;
-      }
-    }
-  };
-});
-
-onUnmounted(() => {
-  if (ws) ws.close();
-});
 
 const { state, esComandante, logout } = useAuth();
 const router = useRouter();
@@ -158,6 +134,7 @@ const suministros = ref([]);
 const escuadrones = ref([]);
 
 const manifiesto = ref({ mision_id: '', suministro_id: '', cantidad_requerida: 1 });
+let ws = null;
 
 const apiFetch = async (endpoint, options = {}) => {
   const headers = {
@@ -214,5 +191,22 @@ const handleLogout = () => {
 
 onMounted(() => {
   cargarTodo();
+
+  const wsUrl = state.apiBaseUrl.replace('http', 'ws').replace('/api/v1', '') + '/ws';
+  ws = new WebSocket(wsUrl);
+
+  ws.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    if (data.event === 'MISSION_STATE_CHANGED') {
+      const mision = misiones.value.find(m => m.id === data.mision_id);
+      if (mision) {
+        mision.estado = data.nuevo_estado;
+      }
+    }
+  };
+});
+
+onUnmounted(() => {
+  if (ws) ws.close();
 });
 </script>

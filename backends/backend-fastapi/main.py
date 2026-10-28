@@ -1,4 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Depends, HTTPException
+from typing import List
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
@@ -145,8 +147,8 @@ def crear_mision(data: MisionSchema, user: dict = Depends(verificar_rol("COMANDA
     return mision
 
 # Cambiado {mision_id} por {id} para coincidir exactamente con el criterio del enunciado
-@app.post("/api/v1/misiones/{id}/manifiesto")
-def asignar_manifiesto(id: int, data: ManifiestoSchema, user: dict = Depends(verificar_rol("COMANDANTE"))):
+@app.post("/api/v1/misiones/{mision_id}/manifiesto")
+async def asignar_manifiesto(mision_id: int, data: ManifiestoSchema, user: dict = Depends(verificar_rol("COMANDANTE"))):
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
@@ -155,16 +157,23 @@ def asignar_manifiesto(id: int, data: ManifiestoSchema, user: dict = Depends(ver
                    VALUES (%s, %s, %s)
                    ON CONFLICT (mision_id, suministro_id)
                    DO UPDATE SET cantidad_requerida = EXCLUDED.cantidad_requerida""",
-                (id, data.suministro_id, data.cantidad_requerida)
+                (mision_id, data.suministro_id, data.cantidad_requerida)
             )
             conn.commit()
 
         # Evaluación con la misma conexión de forma segura
-        nuevo_estado = evaluar_estado_mision(id, conn)
+        nuevo_estado = evaluar_estado_mision(mision_id, conn)
     finally:
         conn.close()
 
-    return {"mensaje": "Manifiesto actualizado", "mision_id": id, "nuevo_estado": nuevo_estado}
+        # Broadcast en tiempo real
+        await manager.broadcast({
+            "event": "MISSION_STATE_CHANGED",
+            "mision_id": mision_id,
+            "nuevo_estado": nuevo_estado
+        })
+
+        return {"mensaje": "Manifiesto actualizado", "mision_id": mision_id, "nuevo_estado": nuevo_estado}
 
 @app.get("/api/v1/escuadrones")
 def listar_escuadrones(user: dict = Depends(obtener_usuario_actual)):
@@ -178,3 +187,31 @@ def listar_escuadrones(user: dict = Depends(obtener_usuario_actual)):
 @app.get("/api/v1/health")
 def health_check():
     return {"status": "UP", "service": "Backend B - FastAPI"}
+
+# Gestor de conexiones activas
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: List[WebSocket] = []
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+
+    def disconnect(self, websocket: WebSocket):
+        if websocket in self.active_connections:
+            self.active_connections.remove(websocket)
+
+    async def broadcast(self, message: dict):
+        for connection in self.active_connections:
+            await connection.send_json(message)
+
+manager = ConnectionManager()
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await manager.connect(websocket)
+    try:
+        while True:
+            await websocket.receive_text()
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)

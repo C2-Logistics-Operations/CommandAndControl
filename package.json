@@ -1,0 +1,22 @@
+{
+  "name": "commandandcontrol",
+  "version": "1.0.0",
+  "description": "Sistema de Despliegue de Operaciones y Suministros.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Honorbound17/CommandAndControl.git"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Honorbound17/CommandAndControl/issues"
+  },
+  "homepage": "https://github.com/Honorbound17/CommandAndControl#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.64.1"
+  }
+}
