@@ -7,76 +7,109 @@ on:
     branches: [ "main", "develop" ]
 
 jobs:
+  # -------------------------------------------------------------
+  # JOB 1: Test Backend Express
+  # -------------------------------------------------------------
   test-backend-express:
     name: Backend Express Tests
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./backend-express
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: './backend-express/package-lock.json'
-      - run: npm ci
-      - run: npm test
 
+      - name: Instalar dependencias y Ejecutar Tests
+        run: |
+          if [ -d "./backend-express" ]; then cd ./backend-express; elif [ -d "./backends/backend-express" ]; then cd ./backends/backend-express; fi
+          npm install
+          npm test
+
+  # -------------------------------------------------------------
+  # JOB 2: Test Backend FastAPI
+  # -------------------------------------------------------------
   test-backend-fastapi:
     name: Backend FastAPI Tests
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./backend-fastapi
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-          cache: 'pip'
-      - run: |
+
+      - name: Instalar dependencias y Ejecutar Tests
+        run: |
+          if [ -d "./backend-fastapi" ]; then cd ./backend-fastapi; elif [ -d "./backends/backend-fastapi" ]; then cd ./backends/backend-fastapi; fi
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      - run: pytest
+          pytest
 
+  # -------------------------------------------------------------
+  # JOB 3: Test Frontend React
+  # -------------------------------------------------------------
   test-frontend-react:
     name: Frontend React Tests
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./frontend-react
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: './frontend-react/package-lock.json'
-      - run: npm ci
-      - run: npm test
 
+      - name: Instalar dependencias y Ejecutar Tests
+        run: |
+          if [ -d "./frontend-react" ]; then cd ./frontend-react; elif [ -d "./frontends/frontend-react" ]; then cd ./frontends/frontend-react; fi
+          npm install
+          npm test
+
+  # -------------------------------------------------------------
+  # JOB 4: Test Frontend Vue 3
+  # -------------------------------------------------------------
   test-frontend-vue:
     name: Frontend Vue 3 Tests
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./frontend-vue
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: './frontend-vue/package-lock.json'
-      - run: npm ci
-      - run: npm test
 
+      - name: Instalar dependencias y Ejecutar Tests
+        run: |
+          if [ -d "./frontend-vue" ]; then cd ./frontend-vue; elif [ -d "./frontends/frontend-vue" ]; then cd ./frontends/frontend-vue; fi
+          npm install
+          npm test
+
+  # -------------------------------------------------------------
+  # JOB 5: Build de Contenedores Docker
+  # -------------------------------------------------------------
   docker-build-check:
     name: Docker Build Validation
     needs: [test-backend-express, test-backend-fastapi, test-frontend-react, test-frontend-vue]
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
-      - run: docker compose build
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Validar compilación de Docker Compose
+        run: docker compose build
