@@ -1,17 +1,19 @@
 import { render, screen } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
-import { AuthProvider } from '../context/AuthContext';
+import { MemoryRouter } from 'react-router-dom';
+import { describe, it, expect, vi } from 'vitest';
 import Login from '../pages/Login';
-import { describe, it, expect } from 'vitest';
+import { AuthContext } from '../context/AuthContext';
 
 describe('Suite de Pruebas: Componente Login React (Frontend A)', () => {
   it('Debe renderizar la interfaz HUD del panel de login', () => {
+    const mockAuth = { login: vi.fn(), usuario: null };
+
     render(
-      <AuthProvider>
-        <BrowserRouter>
+      <AuthContext.Provider value={mockAuth}>
+        <MemoryRouter>
           <Login />
-        </BrowserRouter>
-      </AuthProvider>
+        </MemoryRouter>
+      </AuthContext.Provider>
     );
 
     expect(screen.getByText('[ C2 COMMAND SYSTEM ]')).toBeInTheDocument();
