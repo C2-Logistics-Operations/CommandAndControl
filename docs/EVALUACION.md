@@ -3,20 +3,20 @@
 
 > Documento **generado automáticamente** por la cátedra de Programación III (RepoSense + análisis de calidad + constancia). **No editar a mano**: se regenera en cada evaluación.
 > Rama evaluada: `main`. Análisis **heurístico** (regex + métricas): es una criba para orientar la revisión, **no una nota**.
-> Generado: 2026-10-28.
+> Generado: 2026-10-29.
 
 ## 1. Veredicto
 
 | Aspecto | Resultado |
 |---|---|
 | Tipo de proyecto | frontend |
-| Índice de calidad de servicios | **53/100** (mínimo 60) |
+| Índice de calidad de servicios | **50/100** (mínimo 60) |
 | Criterios cumplidos | **10/15** |
 | Aprobado (semáforo) | **NO** |
-| Código (LOC) | 1,414 |
-| Archivos de código | 29 |
-| Tests (archivos) | 4 |
-| Cobertura de líneas | 39.4% (mínimo 80%) |
+| Código (LOC) | 1,600 |
+| Archivos de código | 32 |
+| Tests (archivos) | 6 |
+| Cobertura de líneas | 32.7% (mínimo 80%) |
 | Capas detectadas | vistas, servicios, estado |
 
 > **Aprobado** exige cumplir **todos** los criterios del semáforo. No es una nota: sirve para ordenar y priorizar la revisión.
@@ -25,7 +25,7 @@
 
 | Autor | Commits | Código (LOC) | Tests (LOC) | Docs (LOC) | Días activos | % del código |
 |---|---:|---:|---:|---:|---:|---:|
-| Esquivel Ignacio | 15 | 2,210 | 83 | 99 | 12 | 100% |
+| Esquivel Ignacio | 27 | 2,375 | 192 | 99 | 16 | 100% |
 
 > _El LOC de autoría lo calcula RepoSense sobre el historial y puede diferir del LOC de código del análisis de calidad (que mira solo el estado de `main`)._
 
@@ -35,7 +35,7 @@
 
 | Alumno | Sesiones | Cumplimiento | Pausa | Recencia | IC | Nivel | Para subir de nivel |
 |---|--:|--:|--:|--:|--:|--|--|
-| Esquivel Ignacio | 13 | 60% | 19 d | 50% | **46** | No aprueba | Pausa 19 d (máx. 10 d) |
+| Esquivel Ignacio | 15 | 68% | 19 d | 100% | **58** | No aprueba | Pausa 19 d (máx. 10 d) |
 
 > Para aprobar el IC: **2 sesiones por semana** sostenidas, sin pausas mayores a **10 días** y con actividad en las **últimas 2 semanas**. Se excluyen merges, bots y al docente. Zona horaria UTC-3.
 
@@ -47,7 +47,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Un resumen numérico (0-100) que combina todas las señales y métricas del análisis, con topes duros por duplicación.
 - **Por qué importa:** Ordena y prioriza la revisión: un índice bajo indica varias señales que conviene mirar juntas.
-- **Tu resultado:** índice **53/100** _(mínimo 60)_
+- **Tu resultado:** índice **50/100** _(mínimo 60)_
 - **Para investigar la causa:**
     - ¿En qué momento del proyecto se concentraron los problemas (arranque, integración de partes, cierre)?
     - ¿El índice bajó por muchas señales chicas o por una o dos graves?
@@ -57,7 +57,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Porcentaje de bloques de código repetidos (similitud) en el repositorio.
 - **Por qué importa:** Cada copia se mantiene por separado: un arreglo hay que repetirlo y los defectos se multiplican.
-- **Tu resultado:** **0.0%** de duplicación _(máximo 15%)_
+- **Tu resultado:** **1.1%** de duplicación _(máximo 15%)_
 
 ### 3. Secretos hardcodeados (SEC) — OK
 
@@ -91,7 +91,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Mensajes de depuración olvidados (`console.log`, `print`, `debugger`).
 - **Por qué importa:** Generan ruido en los registros, pueden filtrar datos y dan sensación de código sin terminar.
-- **Tu resultado:** **1** mensaje(s) de depuración olvidado(s) _(máximo 0)_
+- **Tu resultado:** **2** mensaje(s) de depuración olvidado(s) _(máximo 0)_
 - **Para investigar la causa:**
     - ¿Fue depuración que quedó al cerrar una tarea, o se usó como registro permanente?
     - ¿Hubo una revisión final antes de cerrar la issue o la entrega?
@@ -123,7 +123,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Complejidad ciclomática: cantidad de caminos posibles dentro de una función (condicionales, bucles, casos).
 - **Por qué importa:** Muchos caminos = difícil de seguir y de probar; suelen esconderse casos sin cubrir.
-- **Tu resultado:** **1** bloque(s) de complejidad alta _(máximo 5 por 1000 LOC (tenés 1414 LOC))_
+- **Tu resultado:** **1** bloque(s) de complejidad alta _(máximo 5 por 1000 LOC (tenés 1600 LOC))_
 
 ### 12. Funciones/métodos largos o con muchos parámetros (Tam) — OK
 
@@ -141,7 +141,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Porcentaje de líneas de código ejecutadas por la suite de tests (cobertura real, no cantidad de archivos de test).
 - **Por qué importa:** Un test que existe pero no ejecuta el código no protege de nada: la cobertura muestra qué partes quedan sin verificar.
-- **Tu resultado:** **39.4%** de líneas cubiertas _(mínimo 80% de líneas)_
+- **Tu resultado:** **32.7%** de líneas cubiertas · fuente: ejecución: jest; ejecución: pytest (backends/backend-express 17.6%, backends/backend-fastapi 47.8%) · salteado: frontends/frontend-vue, frontends/frontend-react _(mínimo 80% de líneas)_
 - **Para investigar la causa:**
     - ¿Qué módulos o ramas del sistema nunca se ejecutan en los tests?
     - ¿Los tests prueban el camino principal y los errores, o solo el caso feliz?
@@ -159,11 +159,11 @@ Criterios que hoy están en rojo y qué habría que cambiar para alcanzar el niv
 
 | Criterio | Resultado actual | Meta | Qué arreglar |
 |---|---|---|---|
-| Índice de calidad de servicios (indice) | índice **53/100** | mínimo 60 | Subir el índice a ≥60 corrigiendo primero las señales de más peso: duplicación, secretos, SQL y capas. |
+| Índice de calidad de servicios (indice) | índice **50/100** | mínimo 60 | Subir el índice a ≥60 corrigiendo primero las señales de más peso: duplicación, secretos, SQL y capas. |
 | Acceso a datos dentro del componente (HTTP) | **3** llamada(s) a la API dentro de componente(s) | máximo 0 | Mover `fetch`/`axios` a una capa de servicios/API y consumirla desde los componentes; 0 casos. |
-| Depuración olvidada (DBG) | **1** mensaje(s) de depuración olvidado(s) | máximo 0 | Quitar `console.log`/`print`/`debugger` del código de producción; 0 casos. |
+| Depuración olvidada (DBG) | **2** mensaje(s) de depuración olvidado(s) | máximo 0 | Quitar `console.log`/`print`/`debugger` del código de producción; 0 casos. |
 | Componente demasiado grande (BigC) | **2** componente(s) demasiado grande(s) | máximo 1 | Dividir el componente por responsabilidad en subcomponentes; ≤1 componente grande. |
-| Cobertura de tests (Cob) | **39.4%** de líneas cubiertas | mínimo 80% de líneas | Publicar cobertura (o correr la suite con coverage) y cubrir ≥80% de líneas. |
+| Cobertura de tests (Cob) | **32.7%** de líneas cubiertas · fuente: ejecución: jest; ejecución: pytest (backends/backend-express 17.6%, backends/backend-fastapi 47.8%) · salteado: frontends/frontend-vue, frontends/frontend-react | mínimo 80% de líneas | Publicar cobertura (o correr la suite con coverage) y cubrir ≥80% de líneas. |
 
 > Empezá por las señales de seguridad (**SEC**, **SQL**) y por la **duplicación**: son las que más pesan en el índice y las más rápidas de verificar a ojo.
 
@@ -176,7 +176,8 @@ Archivos donde el análisis encontró cada señal en rojo (sin número de línea
 - `frontends/frontend-vue/src/views/Dashboard.vue`
 - `frontends/frontend-vue/src/views/Login.vue`
 
-**Depuración olvidada (DBG)** — 1 archivo(s):
+**Depuración olvidada (DBG)** — 2 archivo(s):
+- `backends/backend-express/db.js`
 - `backends/backend-express/index.js`
 
 **Componente demasiado grande (BigC)** — 2 archivo(s):
