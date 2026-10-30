@@ -8,41 +8,30 @@ require('dotenv').config();
 
 // POST /api/v1/auth/register
 router.post('/register', async (req, res) => {
-  const { username, password, rol } = req.body;
-
-  if (!username || !password || !rol) {
-    return res.status(400).json({ error: 'Todos los campos son Obligatorios (username, password, rol).' });
-  }
-
-  if (!['COMANDANTE', 'OPERADOR'].includes(rol)) {
-    return res.status(400).json({ error: 'El rol debe ser COMANDANTE u OPERADOR.' });
-  }
-
   try {
-    // Verificar si el usuario ya existe
-    const existeUser = await pool.query('SELECT * FROM usuarios WHERE username = $1', [username]);
-    if (existeUser.rows.length > 0) {
-      return res.status(400).json({ error: 'El nombre de usuario ya está registrado.' });
+    const { username, password, rol } = req.body;
+    if (!username || !password) {
+      return res.status(400).json({ error: 'Usuario y contraseña requeridos' });
     }
 
-    // Hashear la contraseña con cost factor 10
-    const salt = await bcrypt.genSalt(10);
-    const passwordHash = await bcrypt.hash(password, salt);
-
-    // Guardar en la BD
-    const nuevoUsuario = await pool.query(
-      'INSERT INTO usuarios (username, password_hash, rol) VALUES ($1, $2, $3) RETURNING id, username, rol, creado_en',
-      [username, passwordHash, rol]
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const result = await pool.query(
+      'INSERT INTO usuarios (username, password_hash, rol) VALUES ($1, $2, $3) RETURNING id, username, rol',
+      [username, hashedPassword, rol || 'OPERADOR']
     );
 
-    res.status(201).json({
-      mensaje: 'Usuario registrado Exitosamente',
-      usuario: nuevoUsuario.rows[0]
-    });
-  } catch (error) {
-    res.status(500).json({ error: 'Error al registrar usuario', detalle: error.message });
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    // Código 23505 de PostgreSQL: unique_violation (usuario ya existe)
+    if (err.code === '23505') {
+      return res.status(409).json({ error: 'El nombre de usuario ya está registrado' });
+    }
+    console.error('[Auth Error]', err);
+    res.status(500).json({ error: err.message });
   }
 });
+
+module.exports = router;
 
 // POST /api/v1/auth/login
 router.post('/login', async (req, res) => {
