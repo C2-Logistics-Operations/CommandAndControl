@@ -6,41 +6,39 @@ const pool = require('../db');
 const { autenticarJWT } = require('../middleware/auth');
 require('dotenv').config();
 
+// Lista de roles autorizados
+const ALLOWED_ROLES = ['COMANDANTE', 'OPERADOR', 'LOGISTICO'];
+
 // POST /api/v1/auth/register
 router.post('/register', async (req, res) => {
-  const { username, password, rol } = req.body;
-
-  if (!username || !password || !rol) {
-    return res.status(400).json({ error: 'Todos los campos son Obligatorios (username, password, rol).' });
-  }
-
-  if (!['COMANDANTE', 'OPERADOR'].includes(rol)) {
-    return res.status(400).json({ error: 'El rol debe ser COMANDANTE u OPERADOR.' });
-  }
-
   try {
-    // Verificar si el usuario ya existe
-    const existeUser = await pool.query('SELECT * FROM usuarios WHERE username = $1', [username]);
-    if (existeUser.rows.length > 0) {
-      return res.status(400).json({ error: 'El nombre de usuario ya está registrado.' });
+    const { username, password, rol } = req.body;
+
+    // 1. Validar presencia de credenciales obligatorias (y que no sean strings vacíos)
+    if (!username || !username.trim() || !password || !password.trim()) {
+      return res.status(400).json({ error: 'Usuario y contraseña requeridos' });
     }
 
-    // Hashear la contraseña con cost factor 10
-    const salt = await bcrypt.genSalt(10);
-    const passwordHash = await bcrypt.hash(password, salt);
+    // 2. Validar que el rol sea uno de los permitidos (si se especifica)
+    const finalRole = rol || 'OPERADOR';
+    if (!ALLOWED_ROLES.includes(finalRole)) {
+      return res.status(400).json({ error: `Rol no válido. Permisos autorizados: ${ALLOWED_ROLES.join(', ')}` });
+    }
 
-    // Guardar en la BD
-    const nuevoUsuario = await pool.query(
-      'INSERT INTO usuarios (username, password_hash, rol) VALUES ($1, $2, $3) RETURNING id, username, rol, creado_en',
-      [username, passwordHash, rol]
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const result = await pool.query(
+      'INSERT INTO usuarios (username, password_hash, rol) VALUES ($1, $2, $3) RETURNING id, username, rol',
+      [username.trim(), hashedPassword, finalRole]
     );
 
-    res.status(201).json({
-      mensaje: 'Usuario registrado Exitosamente',
-      usuario: nuevoUsuario.rows[0]
-    });
-  } catch (error) {
-    res.status(500).json({ error: 'Error al registrar usuario', detalle: error.message });
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    // Código 23505 de PostgreSQL: unique_violation (usuario ya existe)
+    if (err.code === '23505') {
+      return res.status(409).json({ error: 'El nombre de usuario ya está registrado' });
+    }
+    console.error('[Auth Error]', err);
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -48,12 +46,12 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
-  if (!username || !password) {
+  if (!username || !username.trim() || !password || !password.trim()) {
     return res.status(400).json({ error: 'Debe ingresar username y password.' });
   }
 
   try {
-    const result = await pool.query('SELECT * FROM usuarios WHERE username = $1', [username]);
+    const result = await pool.query('SELECT * FROM usuarios WHERE username = $1', [username.trim()]);
     if (result.rows.length === 0) {
       return res.status(401).json({ error: 'Credenciales Inválidas.' });
     }
@@ -68,7 +66,7 @@ router.post('/login', async (req, res) => {
 
     // Firmar el Token JWT
     const payload = { id: usuario.id, username: usuario.username, rol: usuario.rol };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '8h' });
+    const token = jwt.sign(payload, process.env.JWT_SECRET || 'fallback_secret', { expiresIn: '8h' });
 
     res.status(200).json({
       mensaje: 'Autenticación exitosa',

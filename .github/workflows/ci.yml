@@ -14,6 +14,21 @@ jobs:
     name: Backend Express Tests
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: c2_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout del código
         uses: actions/checkout@v4
@@ -24,6 +39,12 @@ jobs:
           node-version: '20'
 
       - name: Instalar dependencias y Ejecutar Tests
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USER: postgres
+          DB_PASSWORD: password
+          DB_NAME: c2_db
         run: |
           if [ -d "./backend-express" ]; then cd ./backend-express; elif [ -d "./backends/backend-express" ]; then cd ./backends/backend-express; fi
           npm install

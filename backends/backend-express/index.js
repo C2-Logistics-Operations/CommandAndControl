@@ -1,3 +1,5 @@
+require('dotenv').config(); // 1. Siempre primero para cargar las variables de entorno
+
 const express = require('express');
 const cors = require('cors');
 const http = require('http');
@@ -9,14 +11,19 @@ const suministrosRoutes = require('./routes/suministros');
 const misionesRoutes = require('./routes/misiones');
 const escuadronesRoutes = require('./routes/escuadrones');
 
-require('dotenv').config();
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./swagger');
 
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
 
+// 3. Middlewares globales e inyecciones
 app.use(cors());
 app.use(express.json());
+
+// Ruta de documentación Swagger
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Función de Broadcast global
 const broadcast = (data) => {
