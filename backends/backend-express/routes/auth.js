@@ -6,18 +6,29 @@ const pool = require('../db');
 const { autenticarJWT } = require('../middleware/auth');
 require('dotenv').config();
 
+// Lista de roles autorizados
+const ALLOWED_ROLES = ['COMANDANTE', 'OPERADOR', 'LOGISTICO'];
+
 // POST /api/v1/auth/register
 router.post('/register', async (req, res) => {
   try {
     const { username, password, rol } = req.body;
+
+    // 1. Validar presencia de credenciales obligatorias
     if (!username || !password) {
       return res.status(400).json({ error: 'Usuario y contraseña requeridos' });
+    }
+
+    // 2. Validar que el rol sea uno de los permitidos (si se especifica)
+    const finalRole = rol || 'OPERADOR';
+    if (!ALLOWED_ROLES.includes(finalRole)) {
+      return res.status(400).json({ error: `Rol no válido. Permisos autorizados: ${ALLOWED_ROLES.join(', ')}` });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const result = await pool.query(
       'INSERT INTO usuarios (username, password_hash, rol) VALUES ($1, $2, $3) RETURNING id, username, rol',
-      [username, hashedPassword, rol || 'OPERADOR']
+      [username, hashedPassword, finalRole]
     );
 
     res.status(201).json(result.rows[0]);
@@ -30,8 +41,6 @@ router.post('/register', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
-module.exports = router;
 
 // POST /api/v1/auth/login
 router.post('/login', async (req, res) => {
