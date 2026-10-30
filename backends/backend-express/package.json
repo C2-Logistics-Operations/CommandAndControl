@@ -1,11 +1,10 @@
 {
   "name": "backend-express",
   "version": "1.0.0",
-  "description": "Backend A - C2 Command System en Express.js",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "jest"
+    "test": "NODE_ENV=test jest --forceExit --detectOpenHandles"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
