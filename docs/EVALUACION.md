@@ -10,11 +10,11 @@
 | Aspecto | Resultado |
 |---|---|
 | Tipo de proyecto | app |
-| Índice de calidad de servicios | **68/100** (mínimo 50) |
-| Criterios cumplidos | **12/16** |
+| Índice de calidad de servicios | **71/100** (mínimo 50) |
+| Criterios cumplidos | **13/16** |
 | Aprobado (semáforo) | **NO** |
-| Código (LOC) | 1,476 |
-| Archivos de código | 27 |
+| Código (LOC) | 1,981 |
+| Archivos de código | 31 |
 | Tests (archivos) | 7 |
 | Cobertura de líneas | 32.5% (mínimo 80%) |
 | Capas detectadas | presentacion, logica, datos, vistas, servicios, estado |
@@ -28,7 +28,7 @@
 
 | Autor | Commits | Código (LOC) | Tests (LOC) | Docs (LOC) | Días activos | % del código |
 |---|---:|---:|---:|---:|---:|---:|
-| Esquivel Ignacio | 31 | 2,440 | 195 | 165 | 17 | 100% |
+| Esquivel Ignacio | 34 | 3,062 | 195 | 165 | 18 | 100% |
 
 > _El LOC de autoría lo calcula RepoSense sobre el historial y puede diferir del LOC de código del análisis de calidad (que mira solo el estado de `main`)._
 
@@ -38,7 +38,7 @@
 
 | Alumno | Sesiones | Cumplimiento | Pausa | Recencia | IC | Nivel | Para subir de nivel |
 |---|--:|--:|--:|--:|--:|--|--|
-| Esquivel Ignacio | 16 | 65% | 19 d | 14% | **44** | No aprueba | Recencia 14% (mín. 50%) |
+| Esquivel Ignacio | 17 | 66% | 19 d | 100% | **57** | Aprueba | Cumplimiento 66% (mín. 100%); Pausa 19 d (máx. 5 d) |
 
 > Para aprobar el IC: **2 sesiones por semana** sostenidas, sin pausas mayores a **10 días** y con actividad en las **últimas 2 semanas**. Se excluyen merges, bots y al docente. Zona horaria UTC-3.
 
@@ -50,13 +50,13 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Un resumen numérico (0-100) que combina todas las señales y métricas del análisis, con topes duros por duplicación.
 - **Por qué importa:** Ordena y prioriza la revisión: un índice bajo indica varias señales que conviene mirar juntas.
-- **Tu resultado:** índice **68/100** _(mínimo 50)_
+- **Tu resultado:** índice **71/100** _(mínimo 50)_
 
 ### 2. Duplicación (DRY) (duplicacion) — OK
 
 - **Qué mide:** Porcentaje de bloques de código repetidos (similitud) en el repositorio.
 - **Por qué importa:** Cada copia se mantiene por separado: un arreglo hay que repetirlo y los defectos se multiplican.
-- **Tu resultado:** **0.0%** de duplicación _(máximo 15%)_
+- **Tu resultado:** **1.1%** de duplicación _(máximo 15%)_
 
 ### 3. Secretos hardcodeados (SEC) — OK
 
@@ -76,15 +76,11 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 - **Por qué importa:** Sin separación, cada archivo hace de todo y cualquier cambio toca varios lugares a la vez.
 - **Tu resultado:** **6** capa(s) detectada(s): presentacion, logica, datos, vistas, servicios, estado _(mínimo 2 capas (a partir de 150 LOC))_
 
-### 6. Acceso a datos dentro del componente (HTTP) — A REVISAR
+### 6. Acceso a datos dentro del componente (HTTP) — OK
 
 - **Qué mide:** Llamadas `fetch`/`axios` dentro de componentes de UI en vez de una capa de servicios/API.
 - **Por qué importa:** Duplica la lógica de acceso a datos y acopla la vista al backend: un cambio de API toca muchos componentes.
-- **Tu resultado:** **3** llamada(s) a la API dentro de componente(s) _(máximo 0)_
-- **Para investigar la causa:**
-    - ¿Por qué se llamó directo desde el componente: urgencia, desconocimiento de una capa de servicios, o prueba rápida?
-    - ¿La misma llamada aparece en más de un componente?
-    - ¿Se acordó dónde debía vivir el acceso a la API?
+- **Tu resultado:** **0** llamada(s) a la API dentro de componente(s) _(máximo 0)_
 
 ### 7. Depuración olvidada (DBG) — A REVISAR
 
@@ -106,7 +102,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Componentes de UI muy extensos, que suelen mezclar render, estado y lógica.
 - **Por qué importa:** Son difíciles de leer, probar y reutilizar, y sus cambios tienen efectos inesperados.
-- **Tu resultado:** **2** componente(s) demasiado grande(s) _(máximo 1)_
+- **Tu resultado:** **3** componente(s) demasiado grande(s) _(máximo 1)_
 - **Para investigar la causa:**
     - ¿El componente creció a medida que se agregaban requisitos, sin volver a dividirlo?
     - ¿Mezcla responsabilidades distintas (mostrar, calcular, pedir datos)?
@@ -122,7 +118,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Complejidad ciclomática: cantidad de caminos posibles dentro de una función (condicionales, bucles, casos).
 - **Por qué importa:** Muchos caminos = difícil de seguir y de probar; suelen esconderse casos sin cubrir.
-- **Tu resultado:** **1** bloque(s) de complejidad alta _(máximo 5 por 1000 LOC (tenés 1476 LOC))_
+- **Tu resultado:** **1** bloque(s) de complejidad alta _(máximo 5 por 1000 LOC (tenés 1981 LOC))_
 
 ### 12. Funciones/métodos largos o con muchos parámetros (Tam) — OK
 
@@ -150,7 +146,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Cantidad de endpoints (rutas HTTP) expuestos por el backend.
 - **Por qué importa:** El backend se mide por lo que expone: pocos endpoints sugiere poca funcionalidad de servicio.
-- **Tu resultado:** **29** endpoint(s) _(mínimo 5)_
+- **Tu resultado:** **32** endpoint(s) _(mínimo 5)_
 
 ### 16. Vistas del frontend (Vistas) — OK
 
@@ -164,20 +160,19 @@ Criterios que hoy están en rojo y, para cada uno, una explicación breve de **c
 
 | Criterio | Resultado actual | Meta | Brecha | Cómo alcanzarlo |
 |---|---|---|---|---|
-| Acceso a datos dentro del componente (HTTP) | **3** llamada(s) a la API dentro de componente(s) | máximo 0 | 3 caso(s) a eliminar | Creá una capa de servicios/API (un módulo por recurso) que centralice `fetch`/`axios` y consumila desde los componentes; así el acceso a datos deja de estar duplicado en las vistas. Meta: 0 casos. |
 | Depuración olvidada (DBG) | **2** mensaje(s) de depuración olvidado(s) | máximo 0 | 2 caso(s) a eliminar | Borrá `console.log`/`print`/`debugger` del código de producción. Si necesitás registro, usá el logger del proyecto con el nivel adecuado. Meta: 0 casos. |
-| Componente demasiado grande (BigC) | **2** componente(s) demasiado grande(s) | máximo 1 | 1 componente(s) de más | Dividí el componente por responsabilidad en subcomponentes (render, estado, acceso a datos) y dejá el original sólo como orquestador. Meta: ≤1 componente grande. |
+| Componente demasiado grande (BigC) | **3** componente(s) demasiado grande(s) | máximo 1 | 2 componente(s) de más | Dividí el componente por responsabilidad en subcomponentes (render, estado, acceso a datos) y dejá el original sólo como orquestador. Meta: ≤1 componente grande. |
 | Cobertura de tests (Cob) | **32.5%** de líneas cubiertas · fuente: ejecución: jest; ejecución: pytest (backends/backend-express 17.9%, backends/backend-fastapi 47.8%) · salteado: frontends/frontend-vue, frontends/frontend-react | mínimo 80% de líneas | faltan 47.5 pts | Agregá o ampliá tests que ejecuten los módulos sin cubrir (camino principal y errores) y publicá el artefacto (`coverage/lcov.info`, `coverage-summary.json`, `coverage.xml` o `coverage.json`) o corré la suite con coverage. Meta: ≥80% de líneas. |
 
 > Empezá por las señales de seguridad (**SEC**, **SQL**) y por la **duplicación**: son las que más pesan en el índice y las más rápidas de verificar a ojo. Después de corregir, volvé a correr la medición: el semáforo se recalcula sobre `main`.
 
 ## 6. Actividad en clase (miércoles y viernes)
 
-> Se consideran las **23 clases** del período (miércoles y viernes, según `config/constancia.json`; feriados y semanas sin clase descontados). `Commits` = commits de trabajo (no-merge); `Merges` = merges de PR (también son push). Los días sin actividad dicen **sin actividad**.
+> Se consideran las **26 clases** del período (miércoles y viernes, según `config/constancia.json`; feriados y semanas sin clase descontados). `Commits` = commits de trabajo (no-merge); `Merges` = merges de PR (también son push). Los días sin actividad dicen **sin actividad**.
 
 ### Esquivel Ignacio
 
-**16/23 clases con actividad** · 28 commits · 16 merges
+**17/26 clases con actividad** · 32 commits · 17 merges
 
 | Fecha | Actividad | Repositorios | Commits / merges |
 |---|:--:|---|--:|
@@ -204,23 +199,22 @@ Criterios que hoy están en rojo y, para cada uno, una explicación breve de **c
 | 2026-10-23 | **Sí** | CommandAndControl | 1 / 0 |
 | 2026-10-28 | **Sí** | CommandAndControl | 1 / 2 |
 | 2026-10-30 | **Sí** | CommandAndControl | 4 / 3 |
+| 2026-11-04 | No | sin actividad | 0 / 0 |
+| 2026-11-06 | No | sin actividad | 0 / 0 |
+| 2026-11-11 | **Sí** | CommandAndControl | 4 / 1 |
 
 ## 7. Anexo: dónde mirar
 
 Archivos donde el análisis encontró cada señal en rojo (sin número de línea, a propósito):
 
-**Acceso a datos dentro del componente (HTTP)** — 3 archivo(s):
-- `frontends/frontend-react/src/pages/Login.jsx`
-- `frontends/frontend-vue/src/views/Dashboard.vue`
-- `frontends/frontend-vue/src/views/Login.vue`
-
 **Depuración olvidada (DBG)** — 2 archivo(s):
 - `backends/backend-express/db.js`
 - `backends/backend-express/index.js`
 
-**Componente demasiado grande (BigC)** — 2 archivo(s):
+**Componente demasiado grande (BigC)** — 3 archivo(s):
 - `frontends/frontend-react/src/pages/Dashboard.jsx`
 - `frontends/frontend-vue/src/views/Dashboard.vue`
+- `frontends/frontend-vue/src/views/Login.vue`
 
 ---
 _Informe generado por la cátedra. Los umbrales corresponden al perfil `exigente`. Ante dudas, revisá el archivo señalado y el criterio en `CRITERIOS-CALIDAD.md`._
