@@ -1,3 +1,5 @@
+// Corregido para evitar fallos de case-sensitivity en Linux / Docker
+import { api } from '../services/api';
 import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { fetchConAuth } from '../services/api';
