@@ -1,8 +1,6 @@
-const DEFAULT_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api/v1';
-
-const normalizeBaseUrl = (baseUrl = DEFAULT_BASE_URL) =>
-  baseUrl.replace(/\/+$/, '');
+const BASE_URL =
+  (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api/v1')
+    .replace(/\/+$/, '');
 
 const request = async (endpoint, options = {}) => {
   const token = localStorage.getItem('c2_token');
@@ -12,7 +10,7 @@ const request = async (endpoint, options = {}) => {
     ...options.headers,
   };
 
-  const response = await fetch(`${normalizeBaseUrl()} ${endpoint}`.replace(' ', ''), {
+  const response = await fetch(`${BASE_URL}${endpoint}`, {
     ...options,
     headers,
   });
