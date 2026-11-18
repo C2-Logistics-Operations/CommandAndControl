@@ -211,19 +211,30 @@ Criterios que hoy están en rojo y, para cada uno, una explicación breve de **c
 |---|---|--:|
 | 2026-10-29 | CommandAndControl | 3 / 1 |
 
-## 7. Anexo: dónde mirar
+## 7. Anexo: archivos donde se originan los problemas
 
-Archivos donde el análisis encontró cada señal en rojo (sin número de línea, a propósito):
+Se listan los archivos y líneas que el análisis marca para cada criterio en rojo. Para **duplicación** se muestran los archivos con más líneas repetidas; para **cobertura**, las unidades por debajo del umbral.
 
-**Depuración olvidada (DBG)** — 2 archivo(s):
-- `backends/backend-express/db.js`
-- `backends/backend-express/index.js`
+**Depuración olvidada (DBG)** — 2 hallazgo(s) en 2 archivo(s):
 
-**Componente demasiado grande (BigC)** — 3 archivo(s):
-- `frontends/frontend-react/src/pages/Dashboard.jsx`
-- `frontends/frontend-vue/src/views/Dashboard.vue`
-- `frontends/frontend-vue/src/views/Login.vue`
+| Archivo | Línea(s) | Señal |
+|---|---|---|
+| `backends/backend-express/db.js` | 23 | salida de depuración olvidada |
+| `backends/backend-express/index.js` | 53 | salida de depuración olvidada |
+
+**Componente demasiado grande (BigC)** — 3 hallazgo(s) en 3 archivo(s):
+
+| Archivo | Línea(s) | Señal |
+|---|---|---|
+| `frontends/frontend-react/src/pages/Dashboard.jsx` | 1 | componente grande (257 líneas) |
+| `frontends/frontend-vue/src/views/Dashboard.vue` | 1 | componente grande (410 líneas) |
+| `frontends/frontend-vue/src/views/Login.vue` | 1 | componente grande (158 líneas) |
+
+**Cobertura (Cob)** — unidades por debajo del umbral:
+
+- `backends/backend-express` — 17.9% (35/195 líneas)
+- `backends/backend-fastapi` — 47.8% (89/186 líneas)
 
 ---
-_Informe generado por la cátedra. Los umbrales corresponden al perfil `exigente`. Ante dudas, revisá el archivo señalado y el criterio en `CRITERIOS-CALIDAD.md`._
+_Informe generado por la cátedra. Los umbrales corresponden al perfil `exigente`. Ante dudas, revisá el archivo y la línea señalados y el criterio en `CRITERIOS-CALIDAD.md`._
 <!-- evaluacion:fin -->
