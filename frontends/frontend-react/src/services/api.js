@@ -1,13 +1,12 @@
-const BASE_URL = 'http://localhost:3000/api/v1';
-const BASE_URL = 'http://localhost:3000/api/v1';
+const BASE_URL =
+  (import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1')
+    .replace(/\/+$/, '');
 
-// Función base privada con toda la lógica de seguridad y errores
-const request = async (endpoint, options = {}) => {
-  const token = localStorage.getItem('c2_token');
-  
+export const fetchConAuth = async (endpoint, options = {}) => {
+  const token = localStorage.getItem('token');
   const headers = {
-    'Content-Type': 'application/json',
-    ...(token && { 'Authorization': `Bearer ${token}` }),
+    ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...options.headers,
   };
 
@@ -16,33 +15,32 @@ const request = async (endpoint, options = {}) => {
     headers,
   });
 
-  if (response.status === 401) {
-    localStorage.removeItem('c2_token');
-    localStorage.removeItem('c2_user');
-    window.location.href = '/login';
-    throw new Error('Sesión expirada');
+  const text = await response.text();
+  let data = null;
+  if (text) {
+    try {
+      data = JSON.parse(text);
+    } catch {
+      throw new Error('El servidor devolvió una respuesta inválida.');
+    }
   }
 
-  const data = await response.json();
   if (!response.ok) {
-    throw new Error(data.error || 'Error en la petición');
+    const error = new Error(
+      data?.detail || data?.error || data?.message || `Error HTTP ${response.status}`
+    );
+    error.status = response.status;
+    throw error;
   }
 
   return data;
 };
 
-// Exportación limpia con métodos HTTP listos para usar
 export const api = {
-  get: (endpoint, options) => request(endpoint, { ...options, method: 'GET' }),
-  post: (endpoint, body, options) => request(endpoint, { 
-    ...options, 
-    method: 'POST', 
-    body: JSON.stringify(body) 
-  }),
-  put: (endpoint, body, options) => request(endpoint, { 
-    ...options, 
-    method: 'PUT', 
-    body: JSON.stringify(body) 
-  }),
-  delete: (endpoint, options) => request(endpoint, { ...options, method: 'DELETE' }),
+  get: (endpoint, options = {}) => fetchConAuth(endpoint, { ...options, method: 'GET' }),
+  post: (endpoint, body, options = {}) =>
+    fetchConAuth(endpoint, { ...options, method: 'POST', body: JSON.stringify(body) }),
+  put: (endpoint, body, options = {}) =>
+    fetchConAuth(endpoint, { ...options, method: 'PUT', body: JSON.stringify(body) }),
+  delete: (endpoint, options = {}) => fetchConAuth(endpoint, { ...options, method: 'DELETE' }),
 };
