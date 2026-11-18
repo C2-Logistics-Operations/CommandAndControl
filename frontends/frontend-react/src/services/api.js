@@ -1,9 +1,9 @@
 const BASE_URL =
-  (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api/v1')
+  (import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1')
     .replace(/\/+$/, '');
 
-const request = async (endpoint, options = {}) => {
-  const token = localStorage.getItem('c2_token');
+export const fetchConAuth = async (endpoint, options = {}) => {
+  const token = localStorage.getItem('token');
   const headers = {
     ...(options.body ? { 'Content-Type': 'application/json' } : {}),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -37,10 +37,10 @@ const request = async (endpoint, options = {}) => {
 };
 
 export const api = {
-  get: (endpoint, options = {}) => request(endpoint, { ...options, method: 'GET' }),
+  get: (endpoint, options = {}) => fetchConAuth(endpoint, { ...options, method: 'GET' }),
   post: (endpoint, body, options = {}) =>
-    request(endpoint, { ...options, method: 'POST', body: JSON.stringify(body) }),
+    fetchConAuth(endpoint, { ...options, method: 'POST', body: JSON.stringify(body) }),
   put: (endpoint, body, options = {}) =>
-    request(endpoint, { ...options, method: 'PUT', body: JSON.stringify(body) }),
-  delete: (endpoint, options = {}) => request(endpoint, { ...options, method: 'DELETE' }),
+    fetchConAuth(endpoint, { ...options, method: 'PUT', body: JSON.stringify(body) }),
+  delete: (endpoint, options = {}) => fetchConAuth(endpoint, { ...options, method: 'DELETE' }),
 };
