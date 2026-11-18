@@ -1,100 +1,135 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+// Corregido para evitar fallos de case-sensitivity en Linux / Docker
 import { api } from '../services/api';
+import { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
+import { fetchConAuth } from '../services/api';
 import DashboardHeader from '../components/DashboardHeader';
-import SupplyTable from '../components/SupplyTable';
+import MisionesTab from '../components/MisionesTab';
+import SuministrosTab from '../components/SuministrosTab';
+import EscuadronesTab from '../components/EscuadronesTab';
+
 
 export default function Dashboard() {
-  const { token, usuario, logout } = useContext(AuthContext);
-  const navigate = useNavigate();
+  const { usuario, logout } = useContext(AuthContext);
+  const [tab, setTab] = useState('misiones');
+
+  const [misiones, setMisiones] = useState([]);
   const [suministros, setSuministros] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [escuadrones, setEscuadrones] = useState([]);
   const [error, setError] = useState('');
 
-  const cargarInventario = useCallback(async () => {
-    setLoading(true);
-    setError('');
+  const esComandante = usuario?.rol === 'COMANDANTE';
+
+  const cargarDatos = async () => {
     try {
-      const data = await api.get('/suministros');
-      if (!Array.isArray(data)) {
-        throw new Error('La respuesta del inventario no tiene un formato válido.');
-      }
-      setSuministros(data);
+      setError('');
+      const [dataMisiones, dataSuministros, dataEscuadrones] = await Promise.all([
+        fetchConAuth('/misiones'),
+        fetchConAuth('/suministros'),
+        fetchConAuth('/escuadrones')
+      ]);
+      setMisiones(dataMisiones);
+      setSuministros(dataSuministros);
+      setEscuadrones(dataEscuadrones);
     } catch (err) {
-      if (err.status === 401) {
-        logout();
-        navigate('/login', { replace: true });
-        return;
-      }
-      setError(err.message || 'No se pudo cargar el inventario.');
-    } finally {
-      setLoading(false);
+      setError(err.message);
     }
-  }, [logout, navigate]);
-
-  useEffect(() => {
-    if (!token) {
-      navigate('/login', { replace: true });
-      return;
-    }
-    cargarInventario();
-  }, [token, navigate, cargarInventario]);
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login', { replace: true });
   };
 
-  const totalUnidades = suministros.reduce(
-    (total, item) => total + Number(item.stock_disponible ?? item.cantidad ?? 0),
-    0
-  );
-  const sinStock = suministros.filter(
-    (item) => Number(item.stock_disponible ?? item.cantidad ?? 0) <= 0
-  ).length;
+  useEffect(() => {
+    cargarDatos();
+    const ws = new WebSocket('ws://localhost:3000');
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.event === 'MISSION_STATE_CHANGED') {
+        setMisiones((prevMisiones) =>
+          prevMisiones.map((mision) =>
+            mision.id === data.mision_id ? { ...mision, estado: data.nuevo_estado } : mision
+          )
+        );
+      }
+    };
+
+    return () => ws.close();
+  }, []);
+
+  const handleCrearMision = async (nuevaMision) => {
+    try {
+      await fetchConAuth('/misiones', {
+        method: 'POST',
+        body: JSON.stringify(nuevaMision)
+      });
+      await cargarDatos();
+      return true;
+    } catch (err) {
+      setError(err.message);
+      return false;
+    }
+  };
+
+  const handleCrearSuministro = async (nuevoSuministro) => {
+    try {
+      await fetchConAuth('/suministros', {
+        method: 'POST',
+        body: JSON.stringify(nuevoSuministro)
+      });
+      await cargarDatos();
+      return true;
+    } catch (err) {
+      setError(err.message);
+      return false;
+    }
+  };
+
+  const handleAsignarManifiesto = async (manifiestoData) => {
+    try {
+      await fetchConAuth(`/misiones/${manifiestoData.mision_id}/manifiesto`, {
+        method: 'POST',
+        body: JSON.stringify({
+          suministro_id: parseInt(manifiestoData.suministro_id, 10),
+          cantidad_requerida: parseInt(manifiestoData.cantidad_requerida, 10)
+        })
+      });
+      await cargarDatos();
+      return true;
+    } catch (err) {
+      setError(err.message);
+      return false;
+    }
+  };
 
   return (
-    <div className="dashboard-container">
+    <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       <DashboardHeader
-        title="[ GESTIÓN DE INVENTARIO ]"
         usuario={usuario}
-        onLogout={handleLogout}
+        logout={logout}
+        error={error}
+        tab={tab}
+        setTab={setTab}
       />
-      <main>
-        <div className="dashboard-section-heading">
-          <h2>Inventario de suministros</h2>
-          <button
-            type="button"
-            className="hud-button"
-            onClick={cargarInventario}
-            disabled={loading}
-          >
-            {loading ? 'ACTUALIZANDO...' : 'ACTUALIZAR'}
-          </button>
-        </div>
 
-        {error && <p className="error-message" role="alert">{error}</p>}
+      {tab === 'misiones' && (
+        <MisionesTab
+          misiones={misiones}
+          suministros={suministros}
+          esComandante={esComandante}
+          onCrearMision={handleCrearMision}
+          onAsignarManifiesto={handleAsignarManifiesto}
+        />
+      )}
 
-        <section className="dashboard-grid" aria-label="Resumen del inventario">
-          <article className="hud-panel">
-            <h3>ARTÍCULOS REGISTRADOS</h3>
-            <p className="summary-value">{suministros.length}</p>
-          </article>
-          <article className="hud-panel">
-            <h3>UNIDADES DISPONIBLES</h3>
-            <p className="summary-value">{totalUnidades}</p>
-          </article>
-          <article className="hud-panel">
-            <h3>ARTÍCULOS SIN STOCK</h3>
-            <p className="summary-value">{sinStock}</p>
-          </article>
-        </section>
+      {tab === 'suministros' && (
+        <SuministrosTab
+          suministros={suministros}
+          esComandante={esComandante}
+          onCrearSuministro={handleCrearSuministro}
+        />
+      )}
 
-        <section className="hud-panel">
-          <SupplyTable items={suministros} loading={loading} />
-        </section>
-      </main>
+      {tab === 'escuadrones' && (
+        <EscuadronesTab escuadrones={escuadrones} />
+      )}
     </div>
   );
 }
