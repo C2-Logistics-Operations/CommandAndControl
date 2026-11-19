@@ -1,109 +1,73 @@
-import { useState, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { authService } from '../services/authService';
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
-  const { login } = useContext(AuthContext);
+  const auth = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
-
     try {
-      await login(username, password);
+      const data = await authService.login({ username, password });
+      if (auth?.login) {
+        auth.login(data.token, data.usuario);
+      } else if (data?.token) {
+        localStorage.setItem('token', data.token);
+      }
       navigate('/dashboard');
     } catch (err) {
-      setError(err.message || 'Fallo de autenticación');
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '100vh'
-      }}
-    >
-      <div className="hud-panel" style={{ width: '350px' }}>
-        <h2 style={{ textAlign: 'center', marginTop: 0 }}>
-          [ C2 COMMAND SYSTEM ]
-        </h2>
+    <div className="login-container hud-panel">
+      <h2>[ C2 COMMAND SYSTEM ]</h2>
+      <p className="login-subtitle">INGRESE CREDENCIALES DE ACCESO</p>
+      {error && (
+        <div className="error" role="alert">
+          ⚠️ {error}
+        </div>
+      )}
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="username">OPERADOR / USUARIO:</label>
+        <input
+          id="username"
+          type="text"
+          className="hud-input"
+          autoComplete="username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+          disabled={loading}
+        />
 
-        <p
-          style={{
-            fontSize: '12px',
-            textAlign: 'center',
-            color: '#8b949e'
-          }}
-        >
-          INGRESE CREDENCIALES DE ACCESO
-        </p>
+        <label htmlFor="password">CLAVE DE ACCESO:</label>
+        <input
+          id="password"
+          type="password"
+          className="hud-input"
+          autoComplete="current-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          disabled={loading}
+        />
 
-        {error && (
-          <div
-            role="alert"
-            style={{
-              color: 'var(--danger-red)',
-              marginBottom: '15px',
-              fontSize: '12px'
-            }}
-          >
-            ⚠️ {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="username" style={{ fontSize: '12px' }}>
-            OPERADOR / USUARIO:
-          </label>
-
-          <input
-            id="username"
-            type="text"
-            className="hud-input"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            autoComplete="username"
-            required
-            disabled={loading}
-          />
-
-          <label htmlFor="password" style={{ fontSize: '12px' }}>
-            CLAVE DE ACCESO:
-          </label>
-
-          <input
-            id="password"
-            type="password"
-            className="hud-input"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="current-password"
-            required
-            disabled={loading}
-          />
-
-          <button
-            type="submit"
-            className="hud-button"
-            style={{ width: '100%' }}
-            disabled={loading}
-          >
-            {loading ? 'AUTENTICANDO...' : 'INICIAR SESION'}
-          </button>
-        </form>
-      </div>
+        <button type="submit" className="hud-button" disabled={loading}>
+          {loading ? 'VERIFICANDO...' : 'INICIAR SESION'}
+        </button>
+      </form>
     </div>
   );
 }

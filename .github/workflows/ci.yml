@@ -93,7 +93,7 @@ jobs:
         run: |
           if [ -d "./frontend-react" ]; then cd ./frontend-react; elif [ -d "./frontends/frontend-react" ]; then cd ./frontends/frontend-react; fi
           npm install
-          npm test
+          npm run test:coverage
 
   # -------------------------------------------------------------
   # JOB 4: Test Frontend Vue 3
@@ -115,7 +115,7 @@ jobs:
         run: |
           if [ -d "./frontend-vue" ]; then cd ./frontend-vue; elif [ -d "./frontends/frontend-vue" ]; then cd ./frontends/frontend-vue; fi
           npm install
-          npm test
+          npm run test:coverage
 
   # -------------------------------------------------------------
   # JOB 5: Build de Contenedores Docker
