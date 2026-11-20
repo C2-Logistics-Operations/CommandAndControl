@@ -210,18 +210,31 @@ Criterios que hoy están en rojo y, para cada uno, una explicación breve de **c
 
 ## 7. Anexo: archivos donde se originan los problemas
 
-Se listan los archivos y líneas que el análisis marca para cada criterio en rojo. Para **duplicación** se muestran los archivos con más líneas repetidas; para **cobertura**, las unidades por debajo del umbral.
+Se listan **todos** los archivos y líneas que el análisis marca para cada criterio en rojo. Para **duplicación** se muestran los archivos con líneas repetidas; para **cobertura**, las unidades por debajo del umbral.
+
+**Resumen por archivo** — archivos con más hallazgos:
+
+| Archivo | Hallazgos | Peso total | Señales |
+|---|---:|---:|---|
+| `frontends/frontend-react/src/pages/Dashboard.jsx` | 2 | 9 | high_complexity, long_function |
+| `frontends/frontend-react/src/pages/Login.jsx` | 2 | 9 | high_complexity, long_function |
+| `backends/backend-express/index.js` | 1 | 2 | debug_leftover |
+| `frontends/frontend-react/src/components/DashboardHeader.jsx` | 1 | 4 | long_params |
+| `frontends/frontend-react/src/components/MisionesTab.jsx` | 1 | 4 | long_params |
+| `frontends/frontend-vue/src/views/Login.vue` | 1 | 6 | big_component |
 
 **Depuración olvidada (DBG)** — 1 hallazgo(s) en 1 archivo(s):
 
-| Archivo | Línea(s) | Señal |
-|---|---|---|
-| `backends/backend-express/index.js` | 34 | salida de depuración olvidada |
+| Archivo | Línea(s) | Señal | Detalle |
+|---|---|---|---|
+| `backends/backend-express/index.js` | 34 | debug_leftover | salida de depuración olvidada |
 
 **Cobertura (Cob)** — unidades por debajo del umbral:
 
-- `backends/backend-express` — 17.8% (31/174 líneas)
-- `backends/backend-fastapi` — 47.8% (89/186 líneas)
+| Unidad | Cobertura | Líneas cubiertas / totales |
+|---|---:|---:|
+| `backends/backend-express` | 17.8% | 31/174 |
+| `backends/backend-fastapi` | 47.8% | 89/186 |
 
 ---
 _Informe generado por la cátedra. Los umbrales corresponden al perfil `exigente`. Ante dudas, revisá el archivo y la línea señalados y el criterio en `CRITERIOS-CALIDAD.md`._
