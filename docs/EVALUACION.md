@@ -3,7 +3,7 @@
 
 > Documento **generado automáticamente** por la cátedra de Programación III (RepoSense + análisis de calidad + constancia). **No editar a mano**: se regenera en cada evaluación.
 > Rama evaluada: `main`. Análisis **heurístico** (regex + métricas): es una criba para orientar la revisión, **no una nota**.
-> Generado: 2026-11-19.
+> Generado: 2026-11-20.
 
 ## 1. Veredicto
 
@@ -13,9 +13,9 @@
 | Índice de calidad de servicios | **95/100** (mínimo 50) |
 | Criterios cumplidos | **14/16** |
 | Aprobado (semáforo) | **NO** |
-| Código (LOC) | 2,168 |
-| Archivos de código | 38 |
-| Tests (archivos) | 7 |
+| Código (LOC) | 2,043 |
+| Archivos de código | 37 |
+| Tests (archivos) | 11 |
 | Cobertura de líneas | 33.3% (mínimo 80%) |
 | Capas detectadas | presentacion, logica, datos, vistas, servicios, estado |
 | Pushes directos a `main` (sin PR) | 1 |
@@ -28,7 +28,7 @@
 
 | Autor | Commits | Código (LOC) | Tests (LOC) | Docs (LOC) | Días activos | % del código |
 |---|---:|---:|---:|---:|---:|---:|
-| Esquivel Ignacio | 46 | 3,256 | 195 | 165 | 20 | 100% |
+| Esquivel Ignacio | 47 | 3,116 | 709 | 165 | 21 | 100% |
 
 > _El LOC de autoría lo calcula RepoSense sobre el historial y puede diferir del LOC de código del análisis de calidad (que mira solo el estado de `main`)._
 
@@ -38,7 +38,7 @@
 
 | Alumno | Sesiones | Cumplimiento | Pausa | Recencia | IC | Nivel | Para subir de nivel |
 |---|--:|--:|--:|--:|--:|--|--|
-| Esquivel Ignacio | 19 | 68% | 19 d | 93% | **57** | Aprueba | Cumplimiento 68% (mín. 100%); Pausa 19 d (máx. 5 d) |
+| Esquivel Ignacio | 20 | 71% | 19 d | 93% | **59** | Aprueba | Cumplimiento 71% (mín. 100%); Pausa 19 d (máx. 5 d) |
 
 > Para aprobar el IC: **2 sesiones por semana** sostenidas, sin pausas mayores a **10 días** y con actividad en las **últimas 2 semanas**. Se excluyen merges, bots y al docente. Zona horaria UTC-3.
 
@@ -56,7 +56,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Porcentaje de bloques de código repetidos (similitud) en el repositorio.
 - **Por qué importa:** Cada copia se mantiene por separado: un arreglo hay que repetirlo y los defectos se multiplican.
-- **Tu resultado:** **3.6%** de duplicación _(máximo 15%)_
+- **Tu resultado:** **2.6%** de duplicación _(máximo 15%)_
 
 ### 3. Secretos hardcodeados (SEC) — OK
 
@@ -114,7 +114,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Complejidad ciclomática: cantidad de caminos posibles dentro de una función (condicionales, bucles, casos).
 - **Por qué importa:** Muchos caminos = difícil de seguir y de probar; suelen esconderse casos sin cubrir.
-- **Tu resultado:** **1** bloque(s) de complejidad alta _(máximo 5 por 1000 LOC (tenés 2168 LOC))_
+- **Tu resultado:** **2** bloque(s) de complejidad alta _(máximo 5 por 1000 LOC (tenés 2043 LOC))_
 
 ### 12. Funciones/métodos largos o con muchos parámetros (Tam) — OK
 
@@ -148,7 +148,7 @@ Cada aspecto indica **qué mide**, **por qué importa** y **tu resultado**. Cuan
 
 - **Qué mide:** Cantidad de vistas/componentes de pantalla del frontend.
 - **Por qué importa:** El frontend se mide por pantallas: pocas vistas sugiere poca cobertura de la interfaz pedida.
-- **Tu resultado:** **16** vista(s)/componente(s) _(mínimo 6)_
+- **Tu resultado:** **15** vista(s)/componente(s) _(mínimo 6)_
 
 ## 5. Observaciones y qué falta
 
@@ -163,11 +163,11 @@ Criterios que hoy están en rojo y, para cada uno, una explicación breve de **c
 
 ## 6. Actividad en clase y fuera de clase
 
-> Se consideran las **28 clases** del período (miércoles y viernes, según `config/constancia.json`; feriados y semanas sin clase descontados). Para cada alumno se muestra la actividad **en cada clase** y también la actividad **fuera de los días de clase** (fines de semana u otros días). `Commits` = commits de trabajo (no-merge); `Merges` = merges de PR (también son push). Los días sin actividad dicen **sin actividad**.
+> Se consideran las **29 clases** del período (miércoles y viernes, según `config/constancia.json`; feriados y semanas sin clase descontados). Para cada alumno se muestra la actividad **en cada clase** y también la actividad **fuera de los días de clase** (fines de semana u otros días). `Commits` = commits de trabajo (no-merge); `Merges` = merges de PR (también son push). Los días sin actividad dicen **sin actividad**.
 
 ### Esquivel Ignacio
 
-**19/28 clases con actividad** · total del período: 43 commits · 18 merges
+**19/29 clases con actividad** · total del período: 43 commits · 18 merges
 
 | Fecha | Actividad | Repositorios | Commits / merges |
 |---|:--:|---|--:|
@@ -199,12 +199,14 @@ Criterios que hoy están en rojo y, para cada uno, una explicación breve de **c
 | 2026-11-11 | **Sí** | CommandAndControl | 4 / 1 |
 | 2026-11-13 | **Sí** | CommandAndControl | 9 / 0 |
 | 2026-11-18 | **Sí** | CommandAndControl | 2 / 1 |
+| 2026-11-20 | No | sin actividad | 0 / 0 |
 
-**Fuera de clase:** 1 fecha(s) con actividad · 3 commits · 1 merges
+**Fuera de clase:** 2 fecha(s) con actividad · 4 commits · 1 merges
 
 | Fecha | Repositorios | Commits / merges |
 |---|---|--:|
 | 2026-10-29 | CommandAndControl | 3 / 1 |
+| 2026-11-19 | CommandAndControl | 1 / 0 |
 
 ## 7. Anexo: archivos donde se originan los problemas
 
