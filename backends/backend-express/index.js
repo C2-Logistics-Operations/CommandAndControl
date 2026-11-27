@@ -31,8 +31,8 @@ app.use('/api/v1/suministros', suministrosRoutes);
 // 6. Iniciar servidor únicamente fuera del entorno de pruebas
 if (process.env.NODE_ENV !== 'test') {
   app.listen(PORT, () => {
-    console.log(
-      `[C2 BACKEND-A] Servidor activo en http://localhost:${PORT}`
+    process.stdout.write(
+      `[C2 BACKEND-A] Servidor activo en http://localhost:${PORT}\n`
     );
   });
 }
